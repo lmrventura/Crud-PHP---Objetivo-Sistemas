@@ -1,7 +1,14 @@
 <?php
     require_once "modelo/cliente.php";
     $objCliente = new Cliente();
-    $dados = $objCliente->read();
+    $clientes = $objCliente->read();
+    // $telefone = $objCliente->readNumber(0);
+    // var_dump($telefone[0]["telefone"]);
+    
+    // $telefone = $objCliente->readNumber(0);
+    // var_dump($telefone);
+    
+    //die;
 ?>
 
 <!DOCTYPE html>
@@ -138,7 +145,7 @@
                 <div class="col-lg-6 col-md-8 mx-auto">
                     <img class="mb-3 logo-img" src="assets/img/obj.jpg">
 
-                    <h3 class="fw-light">{Nome do Candidato}</h3>
+                    <h3 class="fw-light">Luiz Ventura</h3>
 
                 </div>
             </div>
@@ -146,28 +153,24 @@
 
         <div class="row py-lg-5">
             <div class="col-lg-7 mx-auto">
-                
-                <form method="post" action="controle/script.php">
-                <input type="hidden" name="create">
-                <div class="mb-3">
-                    <label for="" class="form-label">Nome:</label>
-                    <input type="text" class="form-control" id="" name="txtNome" placeholder="Fulano da Silva Santos">
-                </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Telefone:</label>
-                    <input type="number" class="form-control" id="" name="txtTelefone" placeholder="(71) 3241-3010">
-                </div>
-                <div class="mb-3">
-                    <label for="" class="form-label">Observação:</label>
-                    <textarea class="form-control" id="" name="txtObservacao" placeholder="Alguma Observação Aqui !" rows="3"></textarea>
-                </div>
-                
-                <div class="mb-3"> <!-- type="button" -->
-                    <button type="submit" class="btn btn-success mb-3"
-                        data-toggle="modal" data-target="#myModalCadastrar"
-                    >Cadastrar</button>
-                </div>
+                <form method="post" action="controle/ctr_cliente.php">
+                    <input type="hidden" name="create">
+                    <div class="mb-3">
+                        <label for="" class="form-label">Nome:</label>
+                        <input type="text" class="form-control" id="" name="txtNome" placeholder="Fulano da Silva Santos">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Telefone:</label>
+                        <input type="number" class="form-control" id="" name="txtTelefone" placeholder="(71) 3241-3010">
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="form-label">Observação:</label>
+                        <textarea class="form-control" id="" name="txtObservacao" placeholder="Alguma Observação Aqui !" rows="3"></textarea>
+                    </div>
                     
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success mb-3">Cadastrar</button>
+                    </div>
                 </form>
             </div>
                 
@@ -193,39 +196,25 @@
                     
                     
                     <?php $dados = array() ?>
-                    <?php foreach ($dados as $cliente): ?>
+                    <?php foreach ($clientes as $cliente): ?>
                         <!--Inicio: Cards -->
                         <div class="col">
                             <div class="card shadow-sm">
 
                                 <div class="card-body">
                                     <label class="text-uppercase"><strong>Nome do Cliente:</strong></label>
-                                    <p class="card-text"><?php echo($cliente['id'])?></p>
+                                    <p class="card-text"><?php echo($cliente['nome'])?></p>
                                     <label class="text-uppercase"><strong>Telefone:</strong></label>
-                                    <p class="card-text"><?php echo($cliente['telefone'])?></p>
+                                    <p class="card-text"><?php echo($objCliente->readNumber( $cliente['cliente_telefone_id_cliente_telefone']) )?></p>
+                                    <!-- <p class="card-text"><?php //echo($cliente['cliente_telefone_id_cliente_telefone'])?></p> -->
                                     <div class="d-flex justify-content-between align-items-center mt-4">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-info"
-                                                data-toggle="modal" data-target="#myModalEditar"
-                                                data-id="<?php echo($cliente['id']) ?>"
-                                                data-nome="<?php echo($cliente['nome']) ?>"
-                                                data-quantidade="<?php echo($cliente['quantidade']) ?>"
-                                                data-preco="<?php echo($cliente['preco']) ?>">
-                                                Editar
-                                            </button>
-                                            <button type="button" class="btn btn-danger"
-                                                data-toggle="modal" data-target="#myModalDeletar"
-                                                data-id="<?php echo($cliente['id']) ?>"
-                                                data-nome="<?php echo( $cliente['nome']) ?>">
-                                                    Deletar
-                                            </button>
-                                            <form action="controle/ctr_produto.php" method="POST">
-                                                <input type="hidden" name="delete" value="<?php echo $cliente['id']; ?>">
-                                                <button class="btn btn-danger" type="submit">Deletar</button>
+                                            <a type="button" class="btn btn-sm btn-primary" href="#">Editar</a>
+                                            <!-- <a type="button" class="btn btn-sm btn-danger" href="">Excluir</a> -->
+                                            <form action="controle/ctr_cliente.php" method="POST">
+                                                <input type="hidden" name="delete" value="<?php echo $cliente['id_cliente']; ?>">
+                                                <button class="btn btn-sm btn-danger" type="submit">Excluir</button>
                                             </form>
-                                            <!-- <a type="button" class="btn btn-sm btn-primary" href="#">Editar</a>
-                                            
-                                            <a type="button" class="btn btn-sm btn-danger" href="#">Excluir</a> -->
                                         </div>
                                         <small class="text-body-secondary">Cadastrado em 12/01/2024</small>
                                     </div>
@@ -257,69 +246,6 @@
         </div>
     </footer>
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
-
-
-<!-- The Modal Cadastrar-->
-<div class="modal" id="myModalCadastrar">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header" style="background-color: black; color:white">
-        <h4 class="modal-title">Cadastrar Produto</h4>
-        <button type="button" class="close" data-dismiss="modal" style="color:white">&times;</button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-            <form action="controle/ctr_produto.php" method="POST">
-                <input type="hidden" name="create">
-                <div class="form-group">
-                    <label for="">Nome</label>
-                    <input type="text" class="form-control" name="txtName" required>
-                </div>
-                <div class="form-group">
-                    <label for="">Quantidade</label>
-                    <input type="text" class="form-control" name="txtAmount" required>
-                </div>
-                <div class="form-group">
-                    <label for="">Preco</label>
-                    <input type="text" class="form-control" name="txtPrice" required>
-                </div>
-                <button type="submit" class="btn btn-success">Enviar</button>
-            </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- The Modal Deletar-->
-<div class="modal" id="myModalDeletar">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header" style="background-color: black; color:white">
-        <h4 class="modal-title">Deletar Produto</h4>
-        <button type="button" class="close" data-dismiss="modal" style="color:white">&times;</button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-            <form action="controle/ctr_produto.php" method="POST">
-                <input type="hidden" name="delete" id="recipient-id">
-                <div class="form-group">
-                    <label for="">Nome</label>
-                    <input type="text" class="form-control" name="txtNome" id="recipient-nome" readonly>
-                </div>
-               
-                <button type="submit" class="btn btn-success">Enviar</button>
-            </form>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 <!-- The Modal Editar-->
 <div class="modal" id="myModalEditar">
